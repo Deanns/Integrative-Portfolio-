@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Feedback & Tech Articles</title>
+  <link rel="stylesheet" href="css/feedback.css">
+</head>
+<body>
+
+<div class="container">
+  <h1>Feedback & Testimonials</h1>
+  <p class="subtitle">Share your experience working with me.</p>
+
+  <div class="grid-2">
+
+    <div class="card">
+      <h3>Submit Feedback</h3>
+      <form id="feedbackForm">
+        <input type="text" id="name" placeholder="Your Name" required>
+        <input type="email" id="email" placeholder="Your Email" required>
+        <textarea id="message" placeholder="Your testimonial..." required></textarea>
+
+        <label>Rating:</label>
+        <div class="star-select" id="starSelect">
+          <span data-value="1">☆</span>
+          <span data-value="2">☆</span>
+          <span data-value="3">☆</span>
+          <span data-value="4">☆</span>
+          <span data-value="5">☆</span>
+        </div>
+
+        <input type="hidden" id="rating" required>
+        <button type="submit">Submit Feedback</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h3>Recent Testimonials</h3>
+      <div id="testimonialList">
+        <p class="empty">No testimonials yet.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="container bottom-section">
+  <h1>Tech Articles</h1>
+  <p class="subtitle">Latest Technology Articles from Dev.to</p>
+  <div id="devArticles" class="grid-2">
+    <p class="empty">Loading articles...</p>
+  </div>
+</div>
+
+<script>
+let selectedRating = 0;
+const stars = document.querySelectorAll("#starSelect span");
+
+stars.forEach(star => {
+  star.addEventListener("click", () => {
+    selectedRating = star.dataset.value;
+    document.getElementById("rating").value = selectedRating;
+    stars.forEach(s => s.textContent = s.dataset.value <= selectedRating ? "★" : "☆");
+  });
+});
+
+document.getElementById("feedbackForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
+  if (selectedRating === 0) { alert("Please select a rating"); return; }
+
+  const name = document.getElementById("name").value;
+  const email = document.getElementById("email").value;
+  const message = document.getElementById("message").value;
+
+  try {
+      const response = await fetch("http://localhost:3000/api/testimonials", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, message, rating: selectedRating })
+      });
+
+      if (!response.ok) throw new Error("Failed to submit feedback");
+
+      const testimonial = await response.json();
+      addTestimonialToDOM(testimonial);
+
+      this.reset();
+      selectedRating = 0;
+      stars.forEach(s => s.textContent = "☆");
+  } catch (err) {
+      alert(err.message);
+  }
+});
+
+function addTestimonialToDOM(testimonial) {
+  const list = document.getElementById("testimonialList");
+  document.querySelector(".empty")?.remove();
+
+  const box = document.createElement("div");
+  box.className = "testimonial";
+  box.innerHTML = `
+    <div class="t-header">
+      <strong>${testimonial.name}</strong>
+      <span class="t-date">${testimonial.date}</span>
+    </div>
+    <div class="t-stars">${"★".repeat(testimonial.rating)}</div>
+    <div class="t-text">${testimonial.message}</div>
+  `;
+  list.prepend(box);
+}
+
+async function loadTestimonials() {
+  try {
+    const res = await fetch("http://localhost:3000/api/testimonials");
+    const testimonials = await res.json();
+    if(testimonials.length === 0) return;
+    document.querySelector(".empty")?.remove();
+    testimonials.reverse().forEach(addTestimonialToDOM);
+  } catch (err) {
+    console.error("Failed to load testimonials:", err);
+  }
+}
+
+async function loadDevArticles() {
+  const container = document.getElementById("devArticles");
+  container.innerHTML = '<p class="empty">Loading articles...</p>';
+
+  try {
+    const res = await fetch("https://dev.to/api/articles?tag=technology&per_page=5");
+    const articles = await res.json();
+
+    container.innerHTML = '';
+
+    if (articles.length === 0) {
+      container.innerHTML = '<p class="empty">No articles found.</p>';
+      return;
+    }
+
+    articles.forEach(article => {
+      const box = document.createElement("div");
+      box.className = "card";
+      box.innerHTML = `
+        <h3><a href="${article.url}" target="_blank">${article.title}</a></h3>
+        <p>By <strong>${article.user.name}</strong> on ${new Date(article.published_at).toLocaleDateString()}</p>
+        <p>${article.description}</p>
+      `;
+      container.appendChild(box);
+    });
+
+  } catch (err) {
+    container.innerHTML = '<p class="empty">Failed to load articles.</p>';
+    console.error("Dev.to API error:", err);
+  }
+}
+
+window.onload = () => {
+  loadTestimonials();
+  loadDevArticles();
+};
+</script>
+</body>
+</html>

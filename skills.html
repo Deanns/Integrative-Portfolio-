@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Skills</title>
+  <link rel="stylesheet" href="css/skills.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div class="container">
+  <h1>My Skills</h1>
+  <p class="subtitle">Overview of my technical skills</p>
+
+  <div class="grid-2">
+
+    <div class="card">
+      <h3><i class="fas fa-code icon"></i> Programming Languages</h3>
+
+      <div class="skill">JavaScript <span>90%</span>
+        <div class="bar"><div style="width:90%"></div></div>
+      </div>
+
+      <div class="skill">Java <span>75%</span>
+        <div class="bar"><div style="width:75%"></div></div>
+
+    </div>
+
+      <div class="skill">Python <span>85%</span>
+        <div class="bar"><div style="width:85%"></div></div>
+      </div>
+
+    </div>
+    
+      <div class="card">
+      <h3><i class="fas fa-globe icon"></i> Web Technologies</h3>
+
+      <div class="skill">HTML <span>95%</span>
+        <div class="bar"><div style="width:95%"></div></div>
+      </div>
+
+      <div class="skill">Node.js <span>75%</span>
+        <div class="bar"><div style="width:75%"></div></div>
+      </div>
+
+      <div class="skill">CSS <span>95%</span>
+        <div class="bar"><div style="width:95%"></div></div>
+        
+      </div>
+      </div>
+
+      <div class="card">
+      <h3><i class="fas fa-database icon"></i> Databases</h3>
+
+      <div class="skill">MySQL <span>85%</span>
+        <div class="bar"><div style="width:85%"></div></div>
+      </div>
+
+      <div class="skill">MariaDB <span>75%</span>
+        <div class="bar"><div style="width:75%"></div></div>
+      </div>
+
+      <div class="skill">Oracle <span>60%</span>
+        <div class="bar"><div style="width:60%"></div></div>
+        
+      </div>
+      </div>
+
+      <div class="card">
+      <h3><i class="fas fa-screwdriver-wrench icon"></i>Tools & Frameworks</h3>
+
+      <div class="skill">VSCode/VB.Net <span>95%</span>
+        <div class="bar"><div style="width:95%"></div></div>
+      </div>
+
+      <div class="skill">Figma <span>95%</span>
+        <div class="bar"><div style="width:95%"></div></div>
+      </div>
+
+      <div class="skill">Android Studio <span>75%</span>
+        <div class="bar"><div style="width:75%"></div></div>
+        
+      </div>
+
+      <div class="skill">Packet Tracer <span>70%</span>
+        <div class="bar"><div style="width:70%"></div></div>
+        
+      </div>
+      </div>
+  </div>
+</div>
+
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+
+  const bars = document.querySelectorAll('.bar div');
+  bars.forEach((bar, index) => {
+    const width = bar.style.width;
+    bar.style.width = "0";
+
+    setTimeout(() => {
+      bar.style.width = width;
+    }, 150 + index * 150);
+  });
+
+  const items = document.querySelectorAll('.fade-item');
+  items.forEach((item, index) => {
+    setTimeout(() => {
+      item.classList.add('active');
+    }, 1000 + index * 150);
+  });
+
+});
+</script>
+
+</body>
+</html>
